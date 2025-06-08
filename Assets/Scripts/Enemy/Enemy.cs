@@ -7,13 +7,13 @@ using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] protected GameObject player;
+    protected static GameObject player;
     public int detectRange = 0;
     public int attackRange = 0;
 
 
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
     }

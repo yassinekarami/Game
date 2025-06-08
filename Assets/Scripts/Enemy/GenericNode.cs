@@ -18,34 +18,25 @@ public class GenericNode
     /// <summary>
     /// the action to be executed when the node is in success mode
     /// </summary>
-    public UnityEvent action; 
+    public UnityAction action;
 
   
 
     /// <summary>
-    /// default constructor for Node class
+    /// default constructor for Generic Node class
     /// </summary>
     public GenericNode(){}
 
-    public GenericNode(NodeStateEnum currentState, StateStatusEnum stateStatus, UnityEvent action)
+    /// <summary>
+    /// constructor for Generic Node class
+    /// </summary>
+    /// <param name="currentState"></param>
+    /// <param name="action"></param>
+    public GenericNode(NodeStateEnum currentState,UnityAction action)
     {
         this.currentState = currentState;
         this.action = action;
     }
-
-
-
-    /// <summary>
-    /// constructor for Node class
-    /// </summary>
-    /// <param name="state">the initial state</param>
-    /// <param name="action">the action to be executed when the node is in success mode</param>
-    public GenericNode(NodeStateEnum currentState, UnityAction action)
-    {
-        this.currentState = currentState;
-      //  this.action = action;
-    }
-
         
 
     /// <summary>
@@ -61,7 +52,7 @@ public class GenericNode
     public void setCurrentState(NodeStateEnum state) { this.currentState = state; }
 
 
-    public UnityEvent getUnityEvent() { return this.action; }
+    public UnityAction getUnityAction() { return this.action; }
 
 
 }

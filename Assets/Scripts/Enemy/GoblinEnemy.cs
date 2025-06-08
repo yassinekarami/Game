@@ -4,18 +4,14 @@ using UnityEngine;
 
 public class GoblinEnemy : Enemy
 {
-    private IDictionary<NodeStateEnum, NodeStateEnum> transitions = new Dictionary<NodeStateEnum, NodeStateEnum>();
 
-    private NodeStateEnum currentState;
-    private NodeStateEnum newState;
+    BehaviorTree behaviorTree;
+    BehaviorTreeEventParameter parametreEventParameter;
+
     void Start()
     {
-        currentState = NodeStateEnum.IDLE;
-        // set up transition list
-        transitions.Add(NodeStateEnum.IDLE, NodeStateEnum.CHASE);
-        transitions.Add(NodeStateEnum.CHASE, NodeStateEnum.ATTACK);
-        transitions.Add(NodeStateEnum.ATTACK, NodeStateEnum.CHASE);
-
+        base.Start();
+        behaviorTree = GetComponent<BehaviorTree>();
     }
 
     void Update()
@@ -25,32 +21,52 @@ public class GoblinEnemy : Enemy
             if (isPlayerDetected())
             {
                 Debug.Log("player detected");
-                if (transitions.TryGetValue(currentState, out newState) && newState.Equals(NodeStateEnum.CHASE))
+                if (behaviorTree.transitions.TryGetValue(behaviorTree.currentState, 
+                    out behaviorTree.potentialStates) && behaviorTree.potentialStates.Contains(NodeStateEnum.CHASE))
                 {
                     Debug.Log("transition possible");
-                    GetComponent<BehaviorTree>()?.execute(currentState);
-                    currentState = newState;
 
-                } else
-                {
-                    Debug.Log("transition impossible");
-                    return;
+                    parametreEventParameter =
+                        new BehaviorTreeEventParameter(NodeStateEnum.CHASE, player.transform.position);
+
+                    behaviorTree.currentState = NodeStateEnum.CHASE;
+
+
                 }
-                
-                
             }
             else if (isPlayerInAttackRange())
             {
                 Debug.Log("player in attack range");
-                // send an event to behaviortree to update the state
-                //      behaviorTreeUpdateEvent?.Invoke(NodeStateEnum.ATTACK);
+                if (behaviorTree.transitions.TryGetValue(behaviorTree.currentState,
+                    out behaviorTree.potentialStates) && behaviorTree.potentialStates.Contains(NodeStateEnum.ATTACK))
+                {
+                    Debug.Log("transition possible");
+
+                    parametreEventParameter =
+                        new BehaviorTreeEventParameter(NodeStateEnum.ATTACK, player.transform.position);
+
+                    behaviorTree.currentState = NodeStateEnum.ATTACK;
+
+                }
             }
             else
             {
                 Debug.Log("idle");
-                //    behaviorTreeUpdateEvent?.Invoke(NodeStateEnum.IDLE);
+                if (behaviorTree.transitions.TryGetValue(behaviorTree.currentState,
+                    out behaviorTree.potentialStates) && behaviorTree.potentialStates.Contains(NodeStateEnum.IDLE))
+                {
+                    Debug.Log("transition possible");
+
+                    parametreEventParameter =
+                        new BehaviorTreeEventParameter(NodeStateEnum.IDLE, player.transform.position);
+
+                    behaviorTree.currentState = NodeStateEnum.IDLE;
+
+                }
             }
-          
+
+            behaviorTree?.execute(parametreEventParameter);
+
         }
 
     }
